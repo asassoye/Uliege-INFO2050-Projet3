@@ -6,8 +6,9 @@ set(CMAKE_C_STANDARD 99)
 set(SOURCE_FILES
         Code/PNM.c
         Code/PNM.h
+        Code/SeamCarving.c
         Code/SeamCarving.h
         Code/Comic.h
-        Code/mainComic.c Code/Comic.c)
+        Code/main.c Code/Comic.c)
 
 add_executable(Projet_3 ${SOURCE_FILES})

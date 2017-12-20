@@ -9,6 +9,8 @@
 #include <stddef.h>
 #include "PNM.h"
 
+int **computeEnergy(int **energy, const PNMImage *image);
+
 /* ------------------------------------------------------------------------- *
  * Reduce the width of a PNM image to `image->width-k` using the seam carving
  * algorithm.

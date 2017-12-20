@@ -4,16 +4,14 @@
  * Partly adapted from http://stackoverflow.com/a/2699908
  * ------------------------------------------------------------------------- */
 #include <stdlib.h>
-#include <stddef.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #include "PNM.h"
 
 // Methods
 
-PNMImage* createPNM(size_t width, size_t height) {
-    PNMImage* image = (PNMImage*) malloc(sizeof(PNMImage));
+PNMImage *createPNM(size_t width, size_t height) {
+    PNMImage *image = (PNMImage *) malloc(sizeof(PNMImage));
     if (!image) {
         return NULL;
     }
@@ -21,7 +19,7 @@ PNMImage* createPNM(size_t width, size_t height) {
     image->width = width;
     image->height = height;
 
-    image->data = (PNMPixel*) malloc(width * height * sizeof(PNMPixel));
+    image->data = (PNMPixel *) malloc(width * height * sizeof(PNMPixel));
     if (!image->data) {
         free(image);
         return NULL;
@@ -30,19 +28,19 @@ PNMImage* createPNM(size_t width, size_t height) {
     return image;
 }
 
-void freePNM(PNMImage* image) {
+void freePNM(PNMImage *image) {
     if (image) {
         free(image->data);
         free(image);
     }
 }
 
-PNMImage* readPNM(const char* filename){
+PNMImage *readPNM(const char *filename) {
     char buffer[16];
     int c;
 
     // Open PNM file for reading
-    FILE* fp = fopen(filename, "rb");
+    FILE *fp = fopen(filename, "rb");
     if (!fp) {
         return NULL;
     }
@@ -82,10 +80,10 @@ PNMImage* readPNM(const char* filename){
         return NULL;
     }
 
-    while (fgetc(fp) != '\n') ;
+    while (fgetc(fp) != '\n');
 
     // Allocate memory
-    PNMImage* image = createPNM(width, height);
+    PNMImage *image = createPNM(width, height);
     if (!image) {
         return NULL;
     }
@@ -101,9 +99,9 @@ PNMImage* readPNM(const char* filename){
     return image;
 }
 
-int writePNM(const char* filename, const PNMImage* image){
+int writePNM(const char *filename, const PNMImage *image) {
     // Open file
-    FILE* fp;
+    FILE *fp;
 
     fp = fopen(filename, "wb");
     if (!fp) {
@@ -112,7 +110,7 @@ int writePNM(const char* filename, const PNMImage* image){
 
     // Write content
     fprintf(fp, "P6\n");
-    fprintf(fp, "%zu %zu\n",image->width, image->height);
+    fprintf(fp, "%zu %zu\n", image->width, image->height);
     fprintf(fp, "255\n");
     fwrite(image->data, 3 * image->width, image->height, fp);
 

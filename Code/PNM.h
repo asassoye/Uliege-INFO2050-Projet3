@@ -20,7 +20,7 @@ typedef struct {
 typedef struct {
     size_t width;
     size_t height;
-    PNMPixel* data;     // Pixel (i, j) is at position i * width + j
+    PNMPixel *data;     // Pixel (i, j) is at position i * width + j
 } PNMImage;
 
 
@@ -38,7 +38,7 @@ typedef struct {
  * image        Pointer to an empty PNM image
  * NULL         if an error occured
  * ------------------------------------------------------------------------- */
-PNMImage* createPNM(size_t width, size_t height);
+PNMImage *createPNM(size_t width, size_t height);
 
 /* ------------------------------------------------------------------------- *
  * Free a PNM image.
@@ -46,7 +46,7 @@ PNMImage* createPNM(size_t width, size_t height);
  * PARAMETER
  * image        Pointer to a PNM image
  * ------------------------------------------------------------------------- */
-void freePNM(PNMImage* image);
+void freePNM(PNMImage *image);
 
 /* ------------------------------------------------------------------------- *
  * Load a PNM image from a file.
@@ -59,7 +59,7 @@ void freePNM(PNMImage* image);
  * image        Pointer to the loaded PNM image
  * NULL         if an error occured
  * ------------------------------------------------------------------------- */
-PNMImage* readPNM(const char* filename);
+PNMImage *readPNM(const char *filename);
 
 /* ------------------------------------------------------------------------- *
  * Write a PNM image into a file.
@@ -72,6 +72,6 @@ PNMImage* readPNM(const char* filename);
  * 0            In case of success
  * -1           Otherwise
  * ------------------------------------------------------------------------- */
-int writePNM(const char* filename, const PNMImage* image);
+int writePNM(const char *filename, const PNMImage *image);
 
 #endif // _PNM_H_

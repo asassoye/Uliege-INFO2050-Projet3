@@ -9,8 +9,6 @@
 #include <stddef.h>
 #include "PNM.h"
 
-int **computeEnergy(int **energy, const PNMImage *image);
-
 /* ------------------------------------------------------------------------- *
  * Reduce the width of a PNM image to `image->width-k` using the seam carving
  * algorithm.
@@ -25,7 +23,7 @@ int **computeEnergy(int **energy, const PNMImage *image);
  * image        Pointer to a new PNM image
  * NULL         if an error occured
  * ------------------------------------------------------------------------- */
-PNMImage* reduceImageWidth(const PNMImage* image, size_t k);
+PNMImage *reduceImageWidth(const PNMImage *image, size_t k);
 
 /* ------------------------------------------------------------------------- *
  * Increase the width of a PNM image to `image->width+k` using the seam
@@ -41,7 +39,7 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k);
  * image        Pointer to a new PNM image
  * NULL         if an error occured
  * ------------------------------------------------------------------------- */
-PNMImage* increaseImageWidth(const PNMImage* image, size_t k);
+PNMImage *increaseImageWidth(const PNMImage *image, size_t k);
 
 
 #endif // _SEAM_CARVING_H_

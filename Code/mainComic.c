@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     size_t comicBorder = 0;
-    if (sscanf(argv[2], "%zu", &comicWidth) != 1) {
+    if (sscanf(argv[2], "%zu", &comicBorder) != 1) {
         fprintf(stderr, "Aborting; Border should be an "
                 "unsigned integer. Got '%s'\n", argv[2]);
         exit(EXIT_FAILURE);

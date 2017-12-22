@@ -4,8 +4,14 @@
 #include <limits.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdbool.h>
 #include "Comic.h"
 #include "PNM.h"
+#include "SeamCarving.h"
+
+#define BG_RED 255;
+#define BG_GREEN 255;
+#define BG_BLUE 255;
 
 
 static unsigned long cost(const PNMImage **images, size_t comicWidth, size_t comicBorder, size_t i, size_t j);
@@ -21,6 +27,8 @@ static unsigned long **createEmptyMatrix(size_t i, size_t j);
 static void freeMatrix(void **matrix, size_t size);
 
 static long min(long a, long b);
+
+static void copierImage(PNMImage *conteneur, const PNMImage *image, const size_t x, const size_t y);
 
 
 size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, size_t comicBorder) {
@@ -83,6 +91,58 @@ size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, 
 
     return placement;
 
+}
+
+PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
+                    size_t comicBorder) {
+
+    size_t *wrap = wrapImages(images, nbImages, comicWidth, comicBorder);
+
+    /*
+     * Si le calcul de la justification echoue.
+     */
+    if (wrap == NULL) {
+        free(wrap);
+        return NULL;
+    }
+
+    size_t lignes = wrap[nbImages - 1];
+
+
+    PNMImage *result = createPNM(comicWidth, (lignes * (images[0]->height + comicBorder) + comicBorder));
+
+    /*
+     * Si l'allocation echoue.
+     */
+    if (result == NULL) {
+        return NULL;
+    }
+
+    /*
+     * Arriere plan
+     */
+    for (int i = 0; i < result->width; ++i) {
+        for (int j = 0; j < result->height; ++j) {
+            result->data[result->width * i + j].red = BG_RED;
+            result->data[result->width * i + j].green = BG_GREEN;
+            result->data[result->width * i + j].blue = BG_BLUE;
+        }
+    }
+
+    copierImage(result, images[1], 100, 100);
+
+    free(wrap);
+
+    return result;
+
+}
+
+static void copierImage(PNMImage *conteneur, const PNMImage *image, const size_t x, const size_t y) {
+    for (size_t i = 0; i < image->height; ++i) {
+        for (int j = 0; j < image->width; ++j) {
+            conteneur->data[(i + y) * conteneur->width + (j + x)] = image->data[i * image->width + j];
+        }
+    }
 }
 
 static void freeMatrix(void **matrix, size_t size) {

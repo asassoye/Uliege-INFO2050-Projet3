@@ -1,0 +1,84 @@
+\documentclass[main.tex]{subfiles}
+% This is a Subfile-proof title page
+% Fill the commands below to suit your needs
+\newcommand{\TITLEPAGEsetAuthors}{Noémie Lecocq \\ Andrew Sassoye}
+\newcommand{\TITLEPAGEsetNames}{Noémie Lecocq \\ Andrew Sassoye}
+\newcommand{\TITLEPAGEsetTitle}{Projet 3 : Mise en page automatique d'une bande dessinée}
+\newcommand{\TITLEPAGEsetDate}{2017-2018}
+\newcommand{\TITLEPAGEsetUniversity}{Université de Liège}
+\newcommand{\TITLEPAGEsetCourseName}{Programmation avancée}
+\newcommand{\TITLEPAGEsetCourseID}{INFO2050}
+\newcommand{\TITLEPAGEsetLogoFileName}{logo_ulg.png}
+
+% -----------------------------------------------------------------------------
+%              Everything below this line should be left untouched
+% -----------------------------------------------------------------------------
+\makeatletter
+\ltx@ifpackageloaded{subfiles}{\begin{document}}{}
+\begin{titlepage}
+
+\newcommand{\TITLEPAGEHRule}{\rule{\linewidth}{0.2mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%-------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%-------------------------------------------------------------------------------
+\title{\TITLEPAGEsetTitle}
+\author{\TITLEPAGEsetAuthors{}}
+\date{\TITLEPAGEsetDate{}}
+
+\textsc{\LARGE \TITLEPAGEsetUniversity{}}\\[1.5cm] % Name of your university/college
+\textsc{\Large \TITLEPAGEsetCourseName{}}\\[0.5cm] % Major heading such as course name
+\textsc{\large \TITLEPAGEsetCourseID{}}\\[0.5cm] % Minor heading such as course title
+
+%-------------------------------------------------------------------------------
+%	TITLE SECTION
+%-------------------------------------------------------------------------------
+
+\TITLEPAGEHRule \\[0.4cm]
+{ \huge \bfseries \TITLEPAGEsetTitle{}}\\[0.4cm] % Title of your document
+\TITLEPAGEHRule \\[1.5cm]
+ 
+%-------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%-------------------------------------------------------------------------------
+
+% \begin{minipage}{0.4\textwidth}
+% \begin{flushleft} \large
+% \emph{Author:}\\
+% John \textsc{Smith} % Your name
+% \end{flushleft}
+% \end{minipage}
+% ~
+% \begin{minipage}{0.4\textwidth}
+% \begin{flushright} \large
+% \emph{Supervisor:} \\
+% Dr. James \textsc{Smith} % Supervisor's Name
+% \end{flushright}
+% \end{minipage}\\[4cm]
+
+% If you don't want a supervisor, uncomment the two lines below and remove the section above
+% \Large \emph{Auteurs:}\\
+\TITLEPAGEsetNames{}\\[3cm] % Your name
+
+%-------------------------------------------------------------------------------
+%	DATE SECTION
+%-------------------------------------------------------------------------------
+
+{\large \TITLEPAGEsetDate{}}\\[3cm] % Date, change the \today to a set date if you want to be precise
+
+%-------------------------------------------------------------------------------
+%	LOGO SECTION
+%-------------------------------------------------------------------------------
+
+% Include a department/university logo - this will require the graphicx package
+\ltx@ifpackageloaded{graphicx}{\includegraphics{\TITLEPAGEsetLogoFileName}\\[1cm]}{}
+ 
+%-------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+\ltx@ifpackageloaded{subfiles}{\end{document}}{}
+\makeatother

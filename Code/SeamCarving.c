@@ -9,15 +9,24 @@
 #include <memory.h>
 
 #include "SeamCarving.h"
+#include "PNM.h"
 
 static void PNMcpy(PNMImage *dest, PNMImage *src);
+
 static void computeEnergy(int **energy, PNMImage *image);
+
 static int findMin(int a, int b, int c);
+
 static void computeCost(int **energy, int **sum, int height, int width);
+
 static void recursiveCost(int **energy, int **sum, int width, int i, int j);
+
 static int *findSeam(int **sum, int *seam, int height, int width);
+
 static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam);
+
 static void markSeam(const int *seam, int **seams, int **marked, int height, size_t k);
+
 static PNMImage *increasePNM(PNMImage *image, int **marked, size_t k);
 
 
@@ -39,7 +48,7 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
         sum[i] = malloc(sizeof(int) * image->width);
     }
     //allocate seam
-    seam = malloc(sizeof(int) * image->width);
+    seam = malloc(sizeof(int) * image->height);
 
     PNMcpy(tmp, (PNMImage *) image);
     for (size_t i = 0; i < k; ++i) {
@@ -64,7 +73,7 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
     return tmp;
 }
 
-PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
+static PNMImage *increaseImage(const PNMImage *image, size_t k) {
     int **energy;
     int **sum;
     int *seam;
@@ -84,7 +93,7 @@ PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
         sum[i] = malloc(sizeof(int) * image->width);
     }
     //allocate seam
-    seam = malloc(sizeof(int) * image->width);
+    seam = malloc(sizeof(int) * image->height);
 
     //allocate seams
     seams = malloc(sizeof(int *) * image->height);
@@ -102,7 +111,7 @@ PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
     for (size_t i = 0; i < k; ++i) {
         computeEnergy(energy, tmp);
         computeCost(energy, sum, (int) tmp->height, (int) tmp->width);
-        findSeam(sum, seam, (int) (image->height), (int) (image->width - i));
+        findSeam(sum, seam, (int) (image->height), (int) tmp->width);
         markSeam(seam, seams, marked, (int) image->height, i);
         reduced = removeSeam(reduced, tmp, seam);
         PNMcpy(tmp, reduced);
@@ -136,6 +145,20 @@ PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
     freePNM(tmp);
 
     return increased;
+}
+
+PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
+    PNMImage *result = createPNM(image->width, image->height);
+    PNMcpy(result, (PNMImage *) image);
+    PNMImage *tmp;
+    while (k > result->width * 20 / 100) {
+        tmp = increaseImage(result, result->width * 20 / 100);
+        k -= image->width * 20 / 100;
+        result = tmp;
+    }
+    tmp = increaseImage(result, k);
+    freePNM(result);
+    return tmp;
 }
 
 static void computeEnergy(int **energy, PNMImage *image) {
@@ -291,13 +314,13 @@ static void markSeam(const int *seam, int **seams, int **marked, int height, siz
 
     for (int i = 0; i < height; ++i) {
         index = 0;
-        for (int j = 0; j < k; ++j) {
+        for (size_t j = 0; j < k; ++j) {
             if (seams[i][j] <= seam[i])
                 index++;
         }
 
         while (marked[i][seam[i] + index] == 1)
-            index ++;
+            index++;
         marked[i][seam[i] + index] = 1;
     }
 
@@ -315,19 +338,19 @@ static PNMImage *increasePNM(PNMImage *image, int **marked, size_t k) {
             new->data[i * new->width + index].blue = image->data[i * image->width + j].blue;
             index++;
 
-            if(marked[i][j] == 1){
+            if (marked[i][j] == 1) {
                 if (j + 1 > image->height - 1)
                     rightPixel = image->data[i * image->width + j];
                 else
                     rightPixel = image->data[i * image->width + j + 1];
                 new->data[i * new->width + index].red = (unsigned char)
-                        (((int)(image->data[i * image->width + j].red) +
-                                (int) (rightPixel.red)) / 2);
+                        (((int) (image->data[i * image->width + j].red) +
+                          (int) (rightPixel.red)) / 2);
                 new->data[i * new->width + index].green = (unsigned char)
-                        (((int)(image->data[i * image->width + j].green) +
+                        (((int) (image->data[i * image->width + j].green) +
                           (int) (rightPixel.green)) / 2);
                 new->data[i * new->width + index].blue = (unsigned char)
-                        (((int)(image->data[i * image->width + j].blue) +
+                        (((int) (image->data[i * image->width + j].blue) +
                           (int) (rightPixel.blue)) / 2);
                 index++;
             }

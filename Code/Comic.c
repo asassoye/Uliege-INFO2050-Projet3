@@ -98,6 +98,16 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
 
     size_t *wrap = wrapImages(images, nbImages, comicWidth, comicBorder);
 
+    fprintf(stderr, "Comic width: %zu\n", comicWidth);
+    fprintf(stderr, "Comic boder: %zu\n", comicBorder);
+    fprintf(stderr, "NB: %zu\n", nbImages);
+    fprintf(stderr, "Table: ");
+
+    for (int j = 0; j < nbImages; ++j) {
+        fprintf(stderr, "%zu ", wrap[j]);
+    }
+    fprintf(stderr, "\n");
+
     /*
      * Si le calcul de la justification echoue.
      */
@@ -106,7 +116,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         return NULL;
     }
 
-    size_t lignes = wrap[nbImages - 1];
+    size_t lignes = wrap[nbImages - 1] + 1;
 
 
     PNMImage *result = createPNM(comicWidth, (lignes * (images[0]->height + comicBorder) + comicBorder));
@@ -129,8 +139,36 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         }
     }
 
-    copierImage(result, images[6], 5, 500);
+    size_t *imageParLigne = calloc(lignes, sizeof(size_t));
+    unsigned long tmp = 0, cmp = 0;
 
+    for (size_t i = 0; i <= nbImages; ++i) {
+        if (wrap[i] == tmp) {
+            cmp++;
+        } else {
+            imageParLigne[tmp] = (size_t) cmp;
+            cmp = 1;
+            tmp++;
+        }
+    }
+
+    for (int j = 0; j < lignes; ++j) {
+        fprintf(stderr, "%zu ", imageParLigne[j]);
+    }
+    fprintf(stderr, "\n");
+
+    cmp = 0;
+    for (int k = 0; k < lignes; ++k) {
+        tmp = comicBorder;
+        for (int i = 0; i < imageParLigne[k]; ++i) {
+            copierImage(result, images[cmp], comicBorder + tmp, comicBorder + k * (images[0]->height + comicBorder));
+            tmp += images[cmp]->width + comicBorder;
+            cmp++;
+        }
+    }
+
+
+    free(imageParLigne);
     free(wrap);
 
     return result;
@@ -219,6 +257,8 @@ static unsigned long *optimalCostf(long unsigned **costMatrix, size_t *parents, 
 
         optimalCostf(costMatrix, parents, j + 1, nbImages);
     }
+
+    free(optimalCost);
 
     return optimalCost;
 }

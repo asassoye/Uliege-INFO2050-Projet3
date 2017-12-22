@@ -165,6 +165,8 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         }
         diference = (((int) comicWidth) - ((int) actualWidth)) / (int) imageParLigne[k];
 
+        fprintf(stderr, "diff: %i ", diference);
+
         if (diference < 0) {
             cmp -= imageParLigne[k];
             for (unsigned i = 0; i < imageParLigne[k]; ++i) {
@@ -178,6 +180,8 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
                 cmp++;
             }
         }
+
+        actualWidth = comicBorder;
     }
 
 
@@ -190,6 +194,10 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
             tmp += images[cmp]->width + comicBorder;
             cmp++;
         }
+    }
+
+    for (int l = 0; l < nbImages; ++l) {
+        freePNM(redimension[l]);
     }
 
     free(redimension);

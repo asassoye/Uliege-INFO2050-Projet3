@@ -18,7 +18,7 @@ static unsigned long cost(const PNMImage **images, size_t comicWidth, size_t com
 
 static long extras(const PNMImage **images, size_t comicWidth, size_t comicBorder, size_t i, size_t j);
 
-static unsigned long *optimalCostf(long unsigned **costMatrix, size_t *parents, size_t j, size_t nbImages);
+static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_t j, size_t nbImages);
 
 static int composePlacement(size_t *parent, size_t indice, size_t *placement);
 
@@ -60,7 +60,7 @@ size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, 
     costMatrix = createEmptyMatrix(nbImages, nbImages);
 
 
-    size_t parents[nbImages + 1];
+    size_t mem[nbImages + 1];
 
     /*
      * On calcule toutes les valeurs de cost
@@ -74,14 +74,14 @@ size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, 
     /*
      * On rempli optimalCost
      */
-    optimalCostf(costMatrix, parents, 0, nbImages);
+    optimal(costMatrix, mem, 0, nbImages);
 
 
     /*
-     * On crée le tableau de l'emplacement de chaque image a partir du tableau parents
+     * On crée le tableau de l'emplacement de chaque image a partir du tableau mem
      */
 
-    composePlacement(parents, nbImages, placement);
+    composePlacement(mem, nbImages, placement);
 
 
     /*
@@ -142,7 +142,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
     size_t *imageParLigne = calloc(lignes, sizeof(size_t));
     unsigned long tmp = 0, cmp = 0;
 
-    for (size_t i = 0; i <= nbImages; ++i) {
+    for (size_t i = 0; i < nbImages; ++i) {
         if (wrap[i] == tmp) {
             cmp++;
         } else {
@@ -152,22 +152,48 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         }
     }
 
-    for (int j = 0; j < lignes; ++j) {
-        fprintf(stderr, "%zu ", imageParLigne[j]);
+    PNMImage **redimension = malloc(nbImages * sizeof(*redimension));
+
+    size_t actualWidth = comicBorder;
+    int diference = 0;
+
+    cmp = 0;
+    for (int k = 0; k < lignes; ++k) {
+        for (int i = 0; i < imageParLigne[k]; ++i) {
+            actualWidth += images[cmp]->width + comicBorder;
+            cmp++;
+        }
+        diference = (((int) comicWidth) - ((int) actualWidth)) / (int) imageParLigne[k];
+
+
+        if (diference < 0) {
+            cmp -= imageParLigne[k];
+            for (int i = 0; i < imageParLigne[k]; ++i) {
+                redimension[cmp] = reduceImageWidth(images[cmp], (size_t) abs(diference));
+                cmp++;
+            }
+        } else if (diference > 0) {
+            cmp -= imageParLigne[k];
+            for (int i = 0; i < imageParLigne[k]; ++i) {
+                redimension[cmp] = increaseImageWidth(images[cmp], (size_t) abs(diference));
+                cmp++;
+            }
+        }
     }
-    fprintf(stderr, "\n");
+
 
     cmp = 0;
     for (int k = 0; k < lignes; ++k) {
         tmp = comicBorder;
         for (int i = 0; i < imageParLigne[k]; ++i) {
-            copierImage(result, images[cmp], comicBorder + tmp, comicBorder + k * (images[0]->height + comicBorder));
+            copierImage(result, redimension[cmp], comicBorder + tmp,
+                        comicBorder + k * (images[0]->height + comicBorder));
             tmp += images[cmp]->width + comicBorder;
             cmp++;
         }
     }
 
-
+    free(redimension);
     free(imageParLigne);
     free(wrap);
 
@@ -232,7 +258,7 @@ static long extras(const PNMImage **images, size_t comicWidth, size_t comicBorde
     return comicWidth - total;
 }
 
-static unsigned long *optimalCostf(long unsigned **costMatrix, size_t *parents, size_t j, size_t nbImages) {
+static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_t j, size_t nbImages) {
 
     unsigned long *optimalCost = calloc(nbImages + 1, sizeof(unsigned long));
 
@@ -255,7 +281,7 @@ static unsigned long *optimalCostf(long unsigned **costMatrix, size_t *parents, 
             }
         }
 
-        optimalCostf(costMatrix, parents, j + 1, nbImages);
+        optimal(costMatrix, parents, j + 1, nbImages);
     }
 
     free(optimalCost);

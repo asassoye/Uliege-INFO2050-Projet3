@@ -163,20 +163,20 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
             actualWidth += images[cmp]->width + comicBorder;
             cmp++;
         }
-        diference = (((int) comicWidth) - ((int) actualWidth)) / (int) imageParLigne[k];
+        diference = (((int) comicWidth) - ((int) actualWidth));
 
         fprintf(stderr, "diff: %i ", diference);
 
         if (diference < 0) {
             cmp -= imageParLigne[k];
             for (unsigned i = 0; i < imageParLigne[k]; ++i) {
-                redimension[cmp] = reduceImageWidth(images[cmp], (size_t) abs(diference));
+                redimension[cmp] = reduceImageWidth(images[cmp], (size_t) abs(diference) / (int) imageParLigne[k]);
                 cmp++;
             }
         } else if (diference > 0) {
             cmp -= imageParLigne[k];
             for (unsigned i = 0; i < imageParLigne[k]; ++i) {
-                redimension[cmp] = increaseImageWidth(images[cmp], (size_t) abs(diference));
+                redimension[cmp] = increaseImageWidth(images[cmp], (size_t) abs(diference) / (int) imageParLigne[k]);
                 cmp++;
             }
         }

@@ -121,15 +121,15 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
     /*
      * Arriere plan
      */
-    for (int i = 0; i < result->width; ++i) {
-        for (int j = 0; j < result->height; ++j) {
+    for (int i = 0; i < result->height; ++i) {
+        for (int j = 0; j < result->width; ++j) {
             result->data[result->width * i + j].red = BG_RED;
             result->data[result->width * i + j].green = BG_GREEN;
             result->data[result->width * i + j].blue = BG_BLUE;
         }
     }
 
-    copierImage(result, images[1], 100, 100);
+    copierImage(result, images[6], 5, 500);
 
     free(wrap);
 
@@ -138,9 +138,18 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
 }
 
 static void copierImage(PNMImage *conteneur, const PNMImage *image, const size_t x, const size_t y) {
+    size_t posX, posY;
+
     for (size_t i = 0; i < image->height; ++i) {
         for (int j = 0; j < image->width; ++j) {
-            conteneur->data[(i + y) * conteneur->width + (j + x)] = image->data[i * image->width + j];
+            posX = j + x;
+            posY = i + y;
+
+            /*
+             * On copie le pixel que si il est dans les limites de l'image
+             */
+            if (posX < conteneur->width && posY < conteneur->height)
+                conteneur->data[posY * conteneur->width + posX] = image->data[i * image->width + j];
         }
     }
 }

@@ -165,7 +165,6 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         }
         diference = (((int) comicWidth) - ((int) actualWidth)) / (int) imageParLigne[k];
 
-
         if (diference < 0) {
             cmp -= imageParLigne[k];
             for (unsigned i = 0; i < imageParLigne[k]; ++i) {
@@ -183,9 +182,9 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
 
 
     cmp = 0;
-    for (int k = 0; k < lignes; ++k) {
+    for (unsigned k = 0; k < lignes; ++k) {
         tmp = comicBorder;
-        for (int i = 0; i < imageParLigne[k]; ++i) {
+        for (unsigned i = 0; i < imageParLigne[k]; ++i) {
             copierImage(result, redimension[cmp], comicBorder + tmp,
                         comicBorder + k * (images[0]->height + comicBorder));
             tmp += images[cmp]->width + comicBorder;
@@ -205,7 +204,7 @@ static void copierImage(PNMImage *conteneur, const PNMImage *image, size_t x, si
     size_t posX, posY;
 
     for (size_t i = 0; i < image->height; ++i) {
-        for (int j = 0; j < image->width; ++j) {
+        for (unsigned j = 0; j < image->width; ++j) {
             posX = j + x;
             posY = i + y;
 

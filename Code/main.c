@@ -16,9 +16,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Aborting; cannot load image '%s'\n", argv[1]);
         exit(EXIT_FAILURE);
     }
-    PNMImage *new = reduceImageWidth(original, (size_t)(100));
+    PNMImage *new = increaseImageWidth(original, 100);
     writePNM(argv[2], new);
-    new->width = original->width;
     freePNM(original);
     freePNM(new);
 }

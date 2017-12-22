@@ -28,7 +28,7 @@ static void freeMatrix(void **matrix, size_t size);
 
 static long min(long a, long b);
 
-static void copierImage(PNMImage *conteneur, const PNMImage *image, const size_t x, const size_t y);
+static void copierImage(PNMImage *conteneur, const PNMImage *image, size_t x, size_t y);
 
 
 size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, size_t comicBorder) {
@@ -103,7 +103,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
     fprintf(stderr, "NB: %zu\n", nbImages);
     fprintf(stderr, "Table: ");
 
-    for (int j = 0; j < nbImages; ++j) {
+    for (unsigned j = 0; j < nbImages; ++j) {
         fprintf(stderr, "%zu ", wrap[j]);
     }
     fprintf(stderr, "\n");
@@ -131,8 +131,8 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
     /*
      * Arriere plan
      */
-    for (int i = 0; i < result->height; ++i) {
-        for (int j = 0; j < result->width; ++j) {
+    for (unsigned i = 0; i < result->height; ++i) {
+        for (unsigned j = 0; j < result->width; ++j) {
             result->data[result->width * i + j].red = BG_RED;
             result->data[result->width * i + j].green = BG_GREEN;
             result->data[result->width * i + j].blue = BG_BLUE;
@@ -158,8 +158,8 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
     int diference = 0;
 
     cmp = 0;
-    for (int k = 0; k < lignes; ++k) {
-        for (int i = 0; i < imageParLigne[k]; ++i) {
+    for (unsigned k = 0; k < lignes; ++k) {
+        for (unsigned i = 0; i < imageParLigne[k]; ++i) {
             actualWidth += images[cmp]->width + comicBorder;
             cmp++;
         }
@@ -168,13 +168,13 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
 
         if (diference < 0) {
             cmp -= imageParLigne[k];
-            for (int i = 0; i < imageParLigne[k]; ++i) {
+            for (unsigned i = 0; i < imageParLigne[k]; ++i) {
                 redimension[cmp] = reduceImageWidth(images[cmp], (size_t) abs(diference));
                 cmp++;
             }
         } else if (diference > 0) {
             cmp -= imageParLigne[k];
-            for (int i = 0; i < imageParLigne[k]; ++i) {
+            for (unsigned i = 0; i < imageParLigne[k]; ++i) {
                 redimension[cmp] = increaseImageWidth(images[cmp], (size_t) abs(diference));
                 cmp++;
             }
@@ -201,7 +201,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
 
 }
 
-static void copierImage(PNMImage *conteneur, const PNMImage *image, const size_t x, const size_t y) {
+static void copierImage(PNMImage *conteneur, const PNMImage *image, size_t x, size_t y) {
     size_t posX, posY;
 
     for (size_t i = 0; i < image->height; ++i) {

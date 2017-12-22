@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <memory.h>
+#include <assert.h>
 
 #include "SeamCarving.h"
 #include "PNM.h"
@@ -299,6 +300,8 @@ static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam) {
 }
 
 static void PNMcpy(PNMImage *dest, PNMImage *src) {
+    assert(dest != NULL && src != NULL);
+
     dest->width = src->width;
     dest->height = src->height;
     for (size_t i = 0; i < src->height * src->width; ++i) {

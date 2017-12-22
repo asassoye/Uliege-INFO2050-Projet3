@@ -20,7 +20,7 @@ static long extras(const PNMImage **images, size_t comicWidth, size_t comicBorde
 
 static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_t j, size_t nbImages);
 
-static int composePlacement(size_t *parent, size_t indice, size_t *placement);
+static int composePlacement(size_t *mem, size_t indice, size_t *placement);
 
 static unsigned long **createEmptyMatrix(size_t i, size_t j);
 
@@ -292,15 +292,15 @@ static long min(long a, long b) {
     return a > b ? b : a;
 }
 
-static int composePlacement(size_t *parent, size_t indice, size_t *placement) {
+static int composePlacement(size_t *mem, size_t indice, size_t *placement) {
     int current;
-    if (parent[indice] == 1) {
+    if (mem[indice] == 1) {
         current = 1;
     } else {
-        current = 1 + composePlacement(parent, parent[indice] - 1, placement);
+        current = 1 + composePlacement(mem, mem[indice] - 1, placement);
     }
 
-    for (size_t i = parent[indice] - 1; i < indice; ++i) {
+    for (size_t i = mem[indice] - 1; i < indice; ++i) {
         placement[i] = (size_t) (current - 1);
     }
 

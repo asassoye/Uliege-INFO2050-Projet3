@@ -58,7 +58,7 @@ static int findMin(int a, int b, int c) {
     }
 }
 
-
+/*
 static void computeSum(int **energy, int **sum, int height, int width) {
     int left, mid, right;
     for (int j = 0; j < width; ++j) {
@@ -79,7 +79,46 @@ static void computeSum(int **energy, int **sum, int height, int width) {
             sum[i][j] = energy[i][j] + findMin(left, mid, right);
         }
     }
+}*/
+
+static void recursiveCost(int **energy, int **sum, int width, int i, int j){
+    int left, mid, right;
+    if (i == 0 && sum[i][j] == INT_MAX){
+        sum[i][j] = energy[i][j];
+        return;
+    }
+    if (j - 1 >= 0 && sum[i - 1][j - 1] == INT_MAX){
+        recursiveCost(energy, sum, width, i - 1, j - 1);
+    }
+    if (sum[i - 1][j] == INT_MAX)
+        recursiveCost(energy, sum, width, i - 1, j);
+    if (j + 1 < width && sum[i - 1][j + 1] == INT_MAX){
+        recursiveCost(energy, sum, width, i - 1, j + 1);
+    }
+    if (j - 1 < 0)
+        left = INT_MAX;
+    else
+        left = sum[i - 1][j - 1];
+    mid = sum[i - 1][j];
+    if (j + 1 >= width)
+        right = INT_MAX;
+    else
+        right = sum[i - 1][j + 1];
+
+    sum[i][j] = energy[i][j] + findMin(left, mid, right);
 }
+
+static void computeCost(int **energy, int **sum, int height, int width){
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            sum[i][j] = INT_MAX;
+        }
+    }
+    for (int j = 0; j < width; ++j) {
+        recursiveCost(energy, sum, width, height - 1, j);
+    }
+}
+
 
 //save the positions
 static int *findSeam(int **sum, int *seam, int height, int width) {
@@ -121,10 +160,10 @@ static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam) {
     new->width--;
 
     int index;
-    for (int i = 0; i < image->height; ++i) {
+    for (size_t i = 0; i < image->height; ++i) {
         index = 0;
-        for (int j = 0; j < image->width; ++j) {
-            if (seam[i] != j) {
+        for (size_t j = 0; j < image->width; ++j) {
+            if (seam[i] != (int) j) {
                 new->data[i * new->width + index].red = image->data[i * image->width + j].red;
                 new->data[i * new->width + index].green = image->data[i * image->width + j].green;
                 new->data[i * new->width + index].blue = image->data[i * image->width + j].blue;
@@ -138,7 +177,7 @@ static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam) {
 static void PNMcpy(PNMImage *dest, PNMImage *src) {
     dest->width = src->width;
     dest->height = src->height;
-    for (int i = 0; i < src->height * src->width; ++i) {
+    for (size_t i = 0; i < src->height * src->width; ++i) {
         dest->data[i] = src->data[i];
     }
 }
@@ -157,15 +196,16 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
     }
     //allocate sum
     sum = malloc(sizeof(int *) * image->height);
-    for (int i = 0; i < image->height; ++i) {
+    for (size_t i = 0; i < image->height; ++i) {
         sum[i] = malloc(sizeof(int) * image->width);
     }
     //allocate seam
-    seam = malloc(sizeof(int) * image->height);
+    seam = malloc(sizeof(int) * image->width);
     PNMcpy(tmp, (PNMImage *) image);
-    for (size_t i = 0; i < image->width - k; ++i) {
+    for (size_t i = 0; i < k; ++i) {
         computeEnergy(energy, tmp);
-        computeSum(energy, sum, (int) (image->height), (int) (image->width - i));
+        //computeSum(energy, sum, (int) (image->height), (int) (image->width - i));
+        computeCost(energy, sum, (int) tmp->height, (int) tmp->width);
         findSeam(sum, seam, (int) (image->height), (int) (image->width - i));
         reduced = removeSeam(reduced, tmp, seam);
         PNMcpy(tmp, reduced);

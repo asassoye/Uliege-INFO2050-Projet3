@@ -142,7 +142,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
     size_t *imageParLigne = calloc(lignes, sizeof(size_t));
     unsigned long tmp = 0, cmp = 0;
 
-    for (size_t i = 0; i < nbImages; ++i) {
+    for (size_t i = 0; i <= nbImages; ++i) {
         if (wrap[i] == tmp) {
             cmp++;
         } else {
@@ -182,6 +182,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         }
 
         actualWidth = comicBorder;
+
     }
 
 
@@ -191,7 +192,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         for (unsigned i = 0; i < imageParLigne[k]; ++i) {
             copierImage(result, redimension[cmp], comicBorder + tmp,
                         comicBorder + k * (images[0]->height + comicBorder));
-            tmp += images[cmp]->width + comicBorder;
+            tmp += redimension[cmp]->width + comicBorder;
             cmp++;
         }
     }

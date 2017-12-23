@@ -10,7 +10,6 @@
 #include <assert.h>
 
 #include "SeamCarving.h"
-#include "PNM.h"
 
 static void PNMcpy(PNMImage *dest, PNMImage *src);
 
@@ -26,7 +25,7 @@ static int *findSeam(int **sum, int *seam, int height, int width);
 
 static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam);
 
-static void markSeam(const int *seam, int **seams, int **marked, int height, size_t k);
+static void markSeam(const int *seam, int **seams, int **marked, int height, int width, size_t k);
 
 static PNMImage *increasePNM(PNMImage *image, int **marked, size_t k);
 
@@ -59,7 +58,6 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
         reduced = removeSeam(reduced, tmp, seam);
         PNMcpy(tmp, reduced);
     }
-
     for (size_t j = 0; j < image->height; ++j) {
         free(energy[j]);
     }
@@ -86,7 +84,7 @@ static PNMImage *increaseImage(const PNMImage *image, size_t k) {
     //allocate energy
     energy = malloc(sizeof(int *) * image->height);
     for (size_t i = 0; i < image->height; ++i) {
-        energy[i] = malloc(sizeof(int) * ((int) image->width));
+        energy[i] = malloc(sizeof(int) * image->width);
     }
     //allocate sum
     sum = malloc(sizeof(int *) * image->height);
@@ -113,10 +111,12 @@ static PNMImage *increaseImage(const PNMImage *image, size_t k) {
         computeEnergy(energy, tmp);
         computeCost(energy, sum, (int) tmp->height, (int) tmp->width);
         findSeam(sum, seam, (int) (image->height), (int) tmp->width);
-        markSeam(seam, seams, marked, (int) image->height, i);
+        markSeam(seam, seams, marked, (int) image->height, (int) image->width, i);
         reduced = removeSeam(reduced, tmp, seam);
         PNMcpy(tmp, reduced);
     }
+
+
     PNMImage *increased = increasePNM((PNMImage *) image, marked, k);
 
     //free matrix of energies
@@ -232,7 +232,7 @@ static void recursiveCost(int **energy, int **sum, int width, int i, int j) {
     else
         right = sum[i - 1][j + 1];
 
-    sum[i][j] = energy[i][j] + findMin(left, mid, right);
+    sum[i][j] = energy[i][j] + findMin(left, right, mid);
 }
 
 static void computeCost(int **energy, int **sum, int height, int width) {
@@ -263,9 +263,11 @@ static int *findSeam(int **sum, int *seam, int height, int width) {
             } else {
                 seam[i] = dest + 1;
             }
-        } else if (dest + 1 >= height) {
+        } else if (dest + 1 > width - 1) {
             if (sum[i][dest - 1] < sum[i][dest]) {
                 seam[i] = dest - 1;
+            } else {
+                seam[i] = dest;
             }
         } else {
             if (sum[i][dest - 1] < sum[i][dest] && sum[i][dest - 1] < sum[i][dest + 1]) {
@@ -309,29 +311,38 @@ static void PNMcpy(PNMImage *dest, PNMImage *src) {
     }
 }
 
-static void markSeam(const int *seam, int **seams, int **marked, int height, size_t k) {
+static void markSeam(const int *seam, int **seams, int **marked, int height, int width, size_t k) {
     int index = 0;
     for (int i = 0; i < height; ++i) {
         seams[i][k] = seam[i];
     }
-
     for (int i = 0; i < height; ++i) {
         index = 0;
         for (size_t j = 0; j < k; ++j) {
-            if (seams[i][j] <= seam[i])
+            if (seams[i][j] <= seam[i]) {
                 index++;
+            }
         }
-
-        while (marked[i][seam[i] + index] == 1)
-            index++;
+        if (seam[i] + index > width - 1) {
+            while (marked[i][seam[i] + index] == 1)
+                index--;
+        } else {
+            while (marked[i][seam[i] + index] == 1) {
+                index++;
+                if (seam[i] + index > width - 1) {
+                    while (marked[i][seam[i] + index] == 1)
+                        index--;
+                    break;
+                }
+            }
+        }
         marked[i][seam[i] + index] = 1;
     }
-
 }
 
 static PNMImage *increasePNM(PNMImage *image, int **marked, size_t k) {
     PNMImage *new = createPNM(image->width + k, image->height);
-    int index;
+    int index = 0;
     PNMPixel rightPixel;
     for (size_t i = 0; i < image->height; ++i) {
         index = 0;

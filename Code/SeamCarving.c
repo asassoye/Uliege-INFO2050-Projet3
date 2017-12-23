@@ -1,3 +1,8 @@
+/*
+ * Noémie Lecocq s130165
+ * Andrew Sassoye
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>

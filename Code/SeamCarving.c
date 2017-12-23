@@ -1,8 +1,3 @@
-//
-// Created by Noémie Lecocq on 20/12/17.
-//
-
-//Je fais ça du coup <3
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -11,23 +6,92 @@
 
 #include "SeamCarving.h"
 
+/** Copie scr dans dest
+ *
+ * @param dest PNMImage de destination
+ * @param src PNMImage à copier
+ */
 static void PNMcpy(PNMImage *dest, PNMImage *src);
 
+/** Calcule l'énergie de chaque pixel et enregistre le résultat dans le tableau energy
+ *
+ * @param energy Tableau à 2 dimensions de la même taille que l'image
+ * @param image L'image dont on doit calculer l'énergie
+ */
 static void computeEnergy(int **energy, PNMImage *image);
 
+/** Trouve le minimum de 3 nombres
+ *
+ * @param a Nombre 1
+ * @param b Nombre 2
+ * @param c Nombre 3
+ * @return Le minimum
+ */
 static int findMin(int a, int b, int c);
 
+/** Calcule le cout minimal du chemin vers chaque pixel
+ *
+ * @param energy Tableau contenant l'énergie de chaque pixel
+ * @param sum Tableau de même taille que energy
+ * @param height Hauteur du tableau
+ * @param width Largeur du tableau
+ */
 static void computeCost(int **energy, int **sum, int height, int width);
 
+/** Calcule récursivement le cout du chemin vers le pixel (i,j)
+ *
+ * @param energy Tableau contenant l'énergie de chaque pixel
+ * @param sum Tableau contenant les couts
+ * @param width Largeur du tableau
+ * @param i Coordonnée du pixel
+ * @param j Coordonnée du pixel
+ */
 static void recursiveCost(int **energy, int **sum, int width, int i, int j);
 
-static int *findSeam(int **sum, int *seam, int height, int width);
+/** Trouve la couture d'énergie minimale
+ *
+ * @param sum Tableau contenant les couts
+ * @param seam Chemin du haut vers le bas de l'image
+ * @param height Hauteur du tableau
+ * @param width Largeur du tableau
+ */
+static void findSeam(int **sum, int *seam, int height, int width);
 
-static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam);
+/** Retire la couture d'énergie minimale
+ *
+ * @param new L'image résultante
+ * @param image L'image originale
+ * @param seam La couture d'énergie minimale
+ */
+static void removeSeam(PNMImage *new, PNMImage *image, const int *seam);
 
+/** Marque les pixels à retirer
+ *
+ * @param seam La couture d'énergie minimale
+ * @param seams Tableau contenant les pixels déjà retirés
+ * @param marked Tableau de pixels
+ * @param height Hauteur du tableau
+ * @param width Largeur du tableau
+ * @param k La position dans le tableau seams
+ */
 static void markSeam(const int *seam, int **seams, int **marked, int height, int width, size_t k);
 
+/** Augmente la taille de l'image en ajoutant un pixel à droite de chaque pixel marqué
+ *
+ * @param image L'image originale
+ * @param marked Tableau de pixels marqués
+ * @param k Le nombre de pixel à ajouter en largeur
+ * @return L'image résultante
+ */
 static PNMImage *increasePNM(PNMImage *image, int **marked, size_t k);
+
+/** Augmente la taille de l'image de k pixel en utilisant le seam carving
+ *
+ * @param image L'image originale
+ * @param k Le nombre de pixel à ajouter en largeur
+ * @return L'image résultante
+ */
+static PNMImage *increaseImage(const PNMImage *image, size_t k);
 
 
 PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
@@ -55,7 +119,7 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
         computeEnergy(energy, tmp);
         computeCost(energy, sum, (int) tmp->height, (int) tmp->width);
         findSeam(sum, seam, (int) (image->height), (int) (image->width - i));
-        reduced = removeSeam(reduced, tmp, seam);
+        removeSeam(reduced, tmp, seam);
         PNMcpy(tmp, reduced);
     }
     for (size_t j = 0; j < image->height; ++j) {
@@ -69,6 +133,20 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
     free(seam);
     freePNM(reduced);
 
+    return tmp;
+}
+
+PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
+    PNMImage *result = createPNM(image->width, image->height);
+    PNMcpy(result, (PNMImage *) image);
+    PNMImage *tmp;
+    while (k > result->width * 20 / 100) {
+        tmp = increaseImage(result, result->width * 20 / 100);
+        k -= image->width * 20 / 100;
+        result = tmp;
+    }
+    tmp = increaseImage(result, k);
+    freePNM(result);
     return tmp;
 }
 
@@ -112,7 +190,7 @@ static PNMImage *increaseImage(const PNMImage *image, size_t k) {
         computeCost(energy, sum, (int) tmp->height, (int) tmp->width);
         findSeam(sum, seam, (int) (image->height), (int) tmp->width);
         markSeam(seam, seams, marked, (int) image->height, (int) image->width, i);
-        reduced = removeSeam(reduced, tmp, seam);
+        removeSeam(reduced, tmp, seam);
         PNMcpy(tmp, reduced);
     }
 
@@ -146,20 +224,6 @@ static PNMImage *increaseImage(const PNMImage *image, size_t k) {
     freePNM(tmp);
 
     return increased;
-}
-
-PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
-    PNMImage *result = createPNM(image->width, image->height);
-    PNMcpy(result, (PNMImage *) image);
-    PNMImage *tmp;
-    while (k > result->width * 20 / 100) {
-        tmp = increaseImage(result, result->width * 20 / 100);
-        k -= image->width * 20 / 100;
-        result = tmp;
-    }
-    tmp = increaseImage(result, k);
-    freePNM(result);
-    return tmp;
 }
 
 static void computeEnergy(int **energy, PNMImage *image) {
@@ -246,7 +310,7 @@ static void computeCost(int **energy, int **sum, int height, int width) {
     }
 }
 
-static int *findSeam(int **sum, int *seam, int height, int width) {
+static void findSeam(int **sum, int *seam, int height, int width) {
     int min = INT_MAX;
     int dest = 0;
     for (int i = 0; i < width; ++i) {
@@ -280,10 +344,9 @@ static int *findSeam(int **sum, int *seam, int height, int width) {
         }
         dest = seam[i];
     }
-    return seam;
 }
 
-static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam) {
+static void removeSeam(PNMImage *new, PNMImage *image, const int *seam) {
     new->width--;
 
     int index;
@@ -298,7 +361,6 @@ static PNMImage *removeSeam(PNMImage *new, PNMImage *image, const int *seam) {
             }
         }
     }
-    return new;
 }
 
 static void PNMcpy(PNMImage *dest, PNMImage *src) {
@@ -352,6 +414,7 @@ static PNMImage *increasePNM(PNMImage *image, int **marked, size_t k) {
             new->data[i * new->width + index].blue = image->data[i * image->width + j].blue;
             index++;
 
+            //double the pixel if necessary
             if (marked[i][j] == 1) {
                 if (j + 1 > image->height - 1)
                     rightPixel = image->data[i * image->width + j];

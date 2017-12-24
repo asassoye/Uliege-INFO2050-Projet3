@@ -197,7 +197,7 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         }
     }
 
-    for (int l = 0; l < nbImages; ++l) {
+    for (size_t l = 0; l < nbImages; ++l) {
         freePNM(redimension[l]);
     }
 
@@ -297,9 +297,6 @@ static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_
     return optimalCost;
 }
 
-static long min(long a, long b) {
-    return a > b ? b : a;
-}
 
 static int composePlacement(size_t *mem, size_t indice, size_t *placement) {
     int current;

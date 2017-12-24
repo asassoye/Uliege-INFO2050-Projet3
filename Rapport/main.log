@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.4.14)  22 DEC 2017 23:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.4.14)  24 DEC 2017 13:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -882,29 +882,64 @@ Package pdftex.def Info: logo_ulg.png used on input line 76.
  [1
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./logo_
-ulg.png>]) [1] (./main.aux) ) 
+ulg.png>])
+LaTeX Font Info:    Try loading font information for U+msa on input line 26.
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 26.
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+<cost.pdf, id=13, 884.30376pt x 470.75874pt>
+File: cost.pdf Graphic file (type pdf)
+ <use cost.pdf>
+Package pdftex.def Info: cost.pdf used on input line 44.
+(pdftex.def)             Requested size: 452.9679pt x 241.13971pt.
+ [1]
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 71.
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 71.
+ [2 <./cost.pdf>]
+[3] (./main.aux) ) 
 Here is how much of TeX's memory you used:
- 7828 strings out of 493089
- 106846 string characters out of 6134842
- 185027 words of memory out of 5000000
- 11148 multiletter control sequences out of 15000+600000
- 12043 words of font info for 26 fonts, out of 8000000 for 9000
+ 7911 strings out of 493089
+ 108358 string characters out of 6134842
+ 189035 words of memory out of 5000000
+ 11202 multiletter control sequences out of 15000+600000
+ 21134 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,5n,35p,240b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2015/texmf-dist/fonts/enc/dvip
-s/cm-super/cm-super-t1.enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/publ
-ic/cm-super/sfbx1200.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public
-/cm-super/sfbx1440.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/c
-m-super/sfbx2074.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-
-super/sfcc1200.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-su
-per/sfcc1440.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-supe
-r/sfcc1728.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/
-sfrm1095.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sf
-rm1200.pfb>
-Output written on main.pdf (2 pages, 112758 bytes).
+ 43i,6n,35p,272b,439s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/cm-super/
+cm-super-t1.enc}</usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmmi10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmmi8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mr8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
+10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8
+.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfbx1095.p
+fb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb
+></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><
+/usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfbx2074.pfb></u
+sr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfcc1095.pfb></usr
+/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfcc1200.pfb></usr/l
+ocal/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfcc1440.pfb></usr/loc
+al/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfcc1728.pfb></usr/local
+/texlive/2015/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/t
+exlive/2015/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb></usr/local/tex
+live/2015/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texli
+ve/2015/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive
+/2015/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb>
+Output written on main.pdf (4 pages, 262650 bytes).
 PDF statistics:
- 45 PDF objects out of 1000 (max. 8388607)
- 31 compressed objects within 1 object stream
+ 99 PDF objects out of 1000 (max. 8388607)
+ 71 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -68,7 +68,7 @@ On peut voir dans la figure \ref{cost} que l'on effectue plusieurs fois le même
 			\Do 
 \li 			$right = cost[i - 1][j + 1]$
 \End
-\li \Comment Si left ou right n'est pas défini, on en tient pas compte
+\li \Comment Si left ou right n'est pas défini, on n'en tient pas compte
 \li 		$cost[i][j] = energy[i][j] + min(left, mid, right)$
 	\End
 \End
@@ -77,12 +77,30 @@ On peut voir dans la figure \ref{cost} que l'on effectue plusieurs fois le même
 $energy$ est un tableau de taille $heigth * width$ contenant l'énergie de chaque pixel.
 
 \subsection{} %e
-Pour une image de taille n * m, la complexité est $O(n * m)$.
+Pour une image de taille n * m, la complexité est $\Theta(n * m)$.
 
-L'espace mémoire utilisé est $O(1)$
+L'espace mémoire utilisé est constant.
 
 \section{Fonctions de réduction et d'élargissement d'une image} %2
 %Mon boulot aussi
 \subsection{Implémentation} %a
+Pour chacune des fonctions, on utilise deux tableaux de même taille que l'image : $energy$ et $sum$. 
+On effectue une boucle $k$ fois :
+
+On calcule l'énergie de chaque pixel et on la place dans $energy$.
+Ensuite on calcule le coût de chaque pixel, et on enregistre les résultats dans $sum$.
+Finalement on cherche le minimum dans la dernière ligne de $sum$ et parcourt $sum$ du bas vers le haut à partir de ce point afin de reconstituer la couture d'énergie minimale que l'on enregistre dans $seam$.
+
+Dans le cas d'un élargissement, on note dans un tableau $marked$, de même taille que l'image, les pixels de la couture d'énergie minimale.
+
+Ensuite on recopie l'image en enlevant les pixels de la couture d'énergie minimale, on a donc une image réduite d'un pixel en largeur.
+\bigbreak
+Après cette boucle le programme se termine et renvoie la nouvelle image réduite $k$ fois dans le cas d'une réduction. 
+
+S'il s'agit d'un élargissement, on recopie l'image originale et pour chaque pixel marqué on ajoute un pixel à sa droite comme expliqué dans l'énoncé. On retourne ensuite cette image de k pixels plus large.
 \subsection{Complexités} %b
+Pour les deux fonctions la complexité en espace est constante puisqu'on modifie directement dans les images et les tableaux.
+La complexité de \textbf{reduceImageWidth} est $\Theta(k*n*m)$.
+
+La complexité de \textbf{increaseImageWidth} est $\Theta(k*n*m)$ si k est inférieur à 20\% de la largeur originale de l'image. Si k est supérieur à 20\%, on devra appeler $n$ fois la fonction pour ne pas dépasser $k > 20\% * m$.
 \end{document}

@@ -103,30 +103,34 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
     int **energy;
     int **sum;
     int *seam;
-    PNMImage *reduced = createPNM(image->width, image->height);
     PNMImage *tmp = createPNM(image->width, image->height);
+    PNMImage *reduced = createPNM(image->width, image->height);
 
-    //allocate energy
+    //On alloue energy
     energy = malloc(sizeof(int *) * image->height);
     for (size_t i = 0; i < image->height; ++i) {
         energy[i] = malloc(sizeof(int) * ((int) image->width));
     }
-    //allocate sum
+    //On alloue sum
     sum = malloc(sizeof(int *) * image->height);
     for (size_t i = 0; i < image->height; ++i) {
         sum[i] = malloc(sizeof(int) * image->width);
     }
-    //allocate seam
+    //On alloue seam
     seam = malloc(sizeof(int) * image->height);
 
-    PNMcpy(tmp, (PNMImage *) image);
+    PNMcpy(reduced, (PNMImage *) image);
+    //A chaque tour on calcule l'énergie de l'image, on cherche la couture d'énergie minimale et
+    // on la retire
     for (size_t i = 0; i < k; ++i) {
-        computeEnergy(energy, tmp);
-        computeCost(energy, sum, (int) tmp->height, (int) tmp->width);
+        computeEnergy(energy, reduced);
+        computeCost(energy, sum, (int) reduced->height, (int) reduced->width);
         findSeam(sum, seam, (int) (image->height), (int) (image->width - i));
-        removeSeam(reduced, tmp, seam);
-        PNMcpy(tmp, reduced);
+        removeSeam(tmp, reduced, seam);
+        PNMcpy(reduced, tmp);
     }
+
+    //On libère tout ce qui a été alloué
     for (size_t j = 0; j < image->height; ++j) {
         free(energy[j]);
     }
@@ -136,21 +140,23 @@ PNMImage *reduceImageWidth(const PNMImage *image, size_t k) {
     }
     free(sum);
     free(seam);
-    freePNM(reduced);
+    freePNM(tmp);
 
-    return tmp;
+    return reduced;
 }
 
 PNMImage *increaseImageWidth(const PNMImage *image, size_t k) {
     PNMImage *result = createPNM(image->width, image->height);
     PNMcpy(result, (PNMImage *) image);
     PNMImage *tmp;
+    //Si la réduction dépasse 20%, on réduit plusieurs fois, de 20% maximum
     while (k > result->width * 20 / 100) {
         tmp = increaseImage(result, result->width * 20 / 100);
         k -= image->width * 20 / 100;
         result = tmp;
     }
     tmp = increaseImage(result, k);
+
     freePNM(result);
     return tmp;
 }
@@ -164,32 +170,35 @@ static PNMImage *increaseImage(const PNMImage *image, size_t k) {
     PNMImage *reduced = createPNM(image->width, image->height);
     PNMImage *tmp = createPNM(image->width, image->height);
 
-    //allocate energy
+    //On alloue energy
     energy = malloc(sizeof(int *) * image->height);
     for (size_t i = 0; i < image->height; ++i) {
         energy[i] = malloc(sizeof(int) * image->width);
     }
-    //allocate sum
+    //On alloue sum
     sum = malloc(sizeof(int *) * image->height);
     for (size_t i = 0; i < image->height; ++i) {
         sum[i] = malloc(sizeof(int) * image->width);
     }
-    //allocate seam
+    //On alloue seam
     seam = malloc(sizeof(int) * image->height);
 
-    //allocate seams
+    //On alloue seams
     seams = malloc(sizeof(int *) * image->height);
     for (size_t i = 0; i < image->height; ++i) {
         seams[i] = malloc(sizeof(int) * k);
     }
 
-    //allocate marked
+    //On alloue marked
     marked = malloc(sizeof(int *) * image->height);
     for (size_t i = 0; i < image->height; ++i) {
         marked[i] = calloc(image->width, sizeof(int));
     }
 
     PNMcpy(tmp, (PNMImage *) image);
+
+    //A chaque tour on calcule l'énergie de l'image, on cherche la couture d'énergie minimale, on
+    // marque les pixels puis on la retire
     for (size_t i = 0; i < k; ++i) {
         computeEnergy(energy, tmp);
         computeCost(energy, sum, (int) tmp->height, (int) tmp->width);
@@ -199,31 +208,25 @@ static PNMImage *increaseImage(const PNMImage *image, size_t k) {
         PNMcpy(tmp, reduced);
     }
 
-
     PNMImage *increased = increasePNM((PNMImage *) image, marked, k);
 
-    //free matrix of energies
+    //On libère tout ce qui a été alloué
     for (size_t j = 0; j < image->height; ++j) {
         free(energy[j]);
     }
     free(energy);
-
     for (size_t j = 0; j < image->height; ++j) {
         free(sum[j]);
     }
     free(sum);
-
-    //free marked
     for (size_t i = 0; i < image->height; ++i) {
         free(marked[i]);
     }
     free(marked);
-
     for (size_t i = 0; i < image->height; ++i) {
         free(seams[i]);
     }
     free(seams);
-
     free(seam);
     freePNM(reduced);
     freePNM(tmp);
@@ -236,6 +239,8 @@ static void computeEnergy(int **energy, PNMImage *image) {
     int prev, next;
     for (int i = 0; i < (int) image->height; ++i) {
         for (int j = 0; j < (int) image->width; ++j) {
+            //On définit les lignes précédente et suivante, si on dépasse la taille on prend la
+            // ligne actuelle
             prev = i - 1;
             next = i + 1;
             if (i - 1 < 0)
@@ -248,7 +253,8 @@ static void computeEnergy(int **energy, PNMImage *image) {
                     (int) image->data[next * image->width + j].green) / 2;
             b = abs((int) image->data[prev * image->width + j].blue -
                     (int) image->data[next * image->width + j].blue) / 2;
-
+            //On définit les colonnes précédente et suivante, si on dépasse la taille on prend la
+            // colonne actuelle
             prev = j - 1;
             next = j + 1;
             if (j - 1 < 0)
@@ -279,10 +285,14 @@ static int findMin(int a, int b, int c) {
 
 static void recursiveCost(int **energy, int **sum, int width, int i, int j) {
     int left, mid, right;
+    //Cas de base : i = 0
     if (i == 0 && sum[i][j] == INT_MAX) {
         sum[i][j] = energy[i][j];
         return;
     }
+
+    //On a besoin que les valeurs des 3 pixels correspondants de la ligne précédente soient
+    // calculées
     if (j - 1 >= 0 && sum[i - 1][j - 1] == INT_MAX) {
         recursiveCost(energy, sum, width, i - 1, j - 1);
     }
@@ -291,6 +301,8 @@ static void recursiveCost(int **energy, int **sum, int width, int i, int j) {
     if (j + 1 < width && sum[i - 1][j + 1] == INT_MAX) {
         recursiveCost(energy, sum, width, i - 1, j + 1);
     }
+
+    //On cherche le minimum des 3 pixels correspondants
     if (j - 1 < 0)
         left = INT_MAX;
     else
@@ -305,11 +317,14 @@ static void recursiveCost(int **energy, int **sum, int width, int i, int j) {
 }
 
 static void computeCost(int **energy, int **sum, int height, int width) {
+    //On met chaque élément de sum à INT_MAX pour repérer facilement les pixels dont le cout
+    // n'est pas défini
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
             sum[i][j] = INT_MAX;
         }
     }
+    //On lance la récursion en partant de la dernière ligne
     for (int j = 0; j < width; ++j) {
         recursiveCost(energy, sum, width, height - 1, j);
     }
@@ -318,6 +333,7 @@ static void computeCost(int **energy, int **sum, int height, int width) {
 static void findSeam(int **sum, int *seam, int height, int width) {
     int min = INT_MAX;
     int dest = 0;
+    //On cherche le cout le plus petit noté à la dernière ligne
     for (int i = 0; i < width; ++i) {
         if (sum[height - 1][i] < min) {
             min = sum[height - 1][i];
@@ -325,6 +341,8 @@ static void findSeam(int **sum, int *seam, int height, int width) {
         }
     }
     seam[height - 1] = dest;
+
+    //On remonte le tableau de pixel et on note le chemin de cout minimal
     for (int i = height - 2; i >= 0; --i) {
         if (dest - 1 < 0) {
             if (sum[i][dest] < sum[i][dest + 1]) {
@@ -357,6 +375,7 @@ static void removeSeam(PNMImage *new, PNMImage *image, const int *seam) {
     int index;
     for (size_t i = 0; i < image->height; ++i) {
         index = 0;
+        //Pour chaque ligne on recopie les pixels n'appartenant pas à la couture minimale
         for (size_t j = 0; j < image->width; ++j) {
             if (seam[i] != (int) j) {
                 new->data[i * new->width + index].red = image->data[i * image->width + j].red;
@@ -414,12 +433,14 @@ static PNMImage *increasePNM(PNMImage *image, int **marked, size_t k) {
     for (size_t i = 0; i < image->height; ++i) {
         index = 0;
         for (size_t j = 0; j < image->width; ++j) {
+            //On recopie chaque pixel de l'image originale
             new->data[i * new->width + index].red = image->data[i * image->width + j].red;
             new->data[i * new->width + index].green = image->data[i * image->width + j].green;
             new->data[i * new->width + index].blue = image->data[i * image->width + j].blue;
             index++;
 
-            //double the pixel if necessary
+            //On ajoute un pixel à droite si nécessaire, sa valeur est la moyenne de son énergie et
+            // de l'énergie du pixel à sa droite dans l'image d'origine
             if (marked[i][j] == 1) {
                 if (j + 1 > image->height - 1)
                     rightPixel = image->data[i * image->width + j];

@@ -10,7 +10,8 @@ set(SOURCE_FILES
         Code/SeamCarving.c
         Code/SeamCarving.h
         Code/Comic.h
-        Code/Comic.c Code/mainSeamCarving.c)
+        Code/Comic.c
+        Code/mainComic.c)
 
 add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 

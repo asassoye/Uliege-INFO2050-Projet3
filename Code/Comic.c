@@ -1,6 +1,6 @@
 
 #include <stdlib.h>
-#include <math.h>
+//#include <math.h>
 #include <limits.h>
 #include <stdio.h>
 #include <assert.h>
@@ -26,7 +26,7 @@ static unsigned long **createEmptyMatrix(size_t i, size_t j);
 
 static void freeMatrix(void **matrix, size_t size);
 
-static long min(long a, long b);
+static long double pow3(long double nombre);
 
 static void copierImage(PNMImage *conteneur, const PNMImage *image, size_t x, size_t y);
 
@@ -244,7 +244,7 @@ static void freeMatrix(void **matrix, size_t size) {
 
 static unsigned long cost(const PNMImage **images, size_t comicWidth, size_t comicBorder, size_t i, size_t j) {
 
-    return (unsigned long) pow(labs(extras(images, comicWidth, comicBorder, i, j)), 3);
+    return (unsigned long) pow3(labs(extras(images, comicWidth, comicBorder, i, j)));
 
 }
 
@@ -350,4 +350,7 @@ static unsigned long **createEmptyMatrix(size_t i, size_t j) {
 
 }
 
+static long double pow3(long double nombre) {
+    return nombre * nombre * nombre;
+}
 

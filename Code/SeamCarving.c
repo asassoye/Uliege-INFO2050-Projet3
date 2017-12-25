@@ -1,6 +1,6 @@
 /*
  * Noémie Lecocq s130165
- * Andrew Sassoye
+ * Andrew Sassoye s160135
  */
 
 #include <stdio.h>

@@ -1,3 +1,7 @@
+/*
+ * Andrew Sassoye s160135
+ * Noémie Lecocq s130165
+ */
 
 #include <stdlib.h>
 //#include <math.h>
@@ -14,20 +18,77 @@
 #define BG_BLUE 255;
 
 
+/**
+ *
+ * @param images Les images PNM
+ * @param comicWidth La largeur de la BD
+ * @param comicBorder La largeur d'un bord
+ * @param i Premiere image
+ * @param j Seconde image
+ * @return Le coup de mettre l'image i et j sur la meme ligne
+ */
 static unsigned long cost(const PNMImage **images, size_t comicWidth, size_t comicBorder, size_t i, size_t j);
 
+/**
+ *
+ * @param images Les images PNM
+ * @param comicWidth La largeur de la BD
+ * @param comicBorder La largeur d'un bord
+ * @param i Premiere image
+ * @param j Seconde image
+ * @return
+ */
 static long extras(const PNMImage **images, size_t comicWidth, size_t comicBorder, size_t i, size_t j);
 
+/**
+ *
+ * @param costMatrix La matrice de cout
+ * @param mem vecteur memoir
+ * @param j Parametre de recursion
+ * @param nbImages nombres d'images
+ * @return
+ */
 static unsigned long *optimal(long unsigned **costMatrix, size_t *mem, size_t j, size_t nbImages);
 
+/**
+ *
+ * @param mem vecteur de memoir
+ * @param indice Indice pour recursion
+ * @param placement Matrice de placement finale des images (vide)
+ * @return
+ */
 static int composePlacement(size_t *mem, size_t indice, size_t *placement);
 
+/**
+ *
+ * @param i Lignes
+ * @param j Colonnes
+ * @return Une matrice vide
+ */
 static unsigned long **createEmptyMatrix(size_t i, size_t j);
 
+/**
+ *
+ * @param matrix Matrice
+ * @param size Taille
+ * Libere la matrice
+ */
 static void freeMatrix(void **matrix, size_t size);
 
+/**
+ *
+ * @param nombre a elever au cube
+ * @return nombre elevé au cube
+ */
 static long double pow3(long double nombre);
 
+/**
+ * Copie une image sur un autre image
+ * @param conteneur
+ * @param image
+ * @param x
+ * @param y
+ */
 static void copierImage(PNMImage *conteneur, const PNMImage *image, size_t x, size_t y);
 
 

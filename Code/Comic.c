@@ -18,7 +18,7 @@ static unsigned long cost(const PNMImage **images, size_t comicWidth, size_t com
 
 static long extras(const PNMImage **images, size_t comicWidth, size_t comicBorder, size_t i, size_t j);
 
-static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_t j, size_t nbImages);
+static unsigned long *optimal(long unsigned **costMatrix, size_t *mem, size_t j, size_t nbImages);
 
 static int composePlacement(size_t *mem, size_t indice, size_t *placement);
 
@@ -60,7 +60,7 @@ size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, 
     costMatrix = createEmptyMatrix(nbImages, nbImages);
 
 
-    size_t mem[nbImages + 1];
+
 
     /*
      * On calcule toutes les valeurs de cost
@@ -74,6 +74,7 @@ size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, 
     /*
      * On rempli mem
      */
+    size_t mem[nbImages + 1];
     optimal(costMatrix, mem, 0, nbImages);
 
 
@@ -266,7 +267,7 @@ static long extras(const PNMImage **images, size_t comicWidth, size_t comicBorde
     return comicWidth - total;
 }
 
-static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_t j, size_t nbImages) {
+static unsigned long *optimal(long unsigned **costMatrix, size_t *mem, size_t j, size_t nbImages) {
 
     unsigned long *optimalCost = calloc(nbImages + 1, sizeof(unsigned long));
 
@@ -275,7 +276,7 @@ static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_
         exit(EXIT_FAILURE);
     }
 
-    if (j <= nbImages) {
+    if (j < nbImages + 1) {
         if (j == 0) {
             optimalCost[j] = 0;
         } else {
@@ -284,17 +285,17 @@ static unsigned long *optimal(long unsigned **costMatrix, size_t *parents, size_
             for (size_t i = 1; i <= j; ++i) {
                 if ((optimalCost[i - 1] + costMatrix[i - 1][j - 1] < optimalCost[j])) {
                     optimalCost[j] = optimalCost[i - 1] + costMatrix[i - 1][j - 1];
-                    parents[j] = i;
+                    mem[j] = i;
                 }
             }
         }
 
-        optimal(costMatrix, parents, j + 1, nbImages);
+        optimal(costMatrix, mem, j + 1, nbImages);
     }
 
     free(optimalCost);
 
-    return optimalCost;
+    return mem;
 }
 
 

@@ -1,0 +1,25 @@
+
+\begin{codebox}
+\Procname{$\proc{Optimal}(j, nbImages)$}
+\li \If $j < nbImages + 1$
+	\Do
+	\li \If $j == 0$
+		\Do
+		\li $optimalCost[j] = 0$
+	\li \Else
+		
+		\li $optimalCost[j] = + \infty$
+		\li \For $i = 1$ \To $j$
+		\Do
+			\li \If $(optimalCost[i - 1] + costMatrix[i - 1][j - 1] < optimalCost[j])$
+			\Do
+				\li $optimalCost[j] = optimalCost[i - 1] + costMatrix[i - 1][j - 1]$
+				\li $mem[j] = i$
+				
+			\End
+		\End \End
+	\li $optimal(j + 1, nbImages)$
+	\End
+\li \Return $mem$
+	
+\end{codebox}

@@ -99,16 +99,6 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
 
     size_t *wrap = wrapImages(images, nbImages, comicWidth, comicBorder);
 
-    fprintf(stderr, "Comic width: %zu\n", comicWidth);
-    fprintf(stderr, "Comic boder: %zu\n", comicBorder);
-    fprintf(stderr, "NB: %zu\n", nbImages);
-    fprintf(stderr, "Table: ");
-
-    for (unsigned j = 0; j < nbImages; ++j) {
-        fprintf(stderr, "%zu ", wrap[j]);
-    }
-    fprintf(stderr, "\n");
-
     /*
      * Si le calcul de la justification echoue.
      */
@@ -166,7 +156,6 @@ PNMImage *packComic(const PNMImage **images, size_t nbImages, size_t comicWidth,
         }
         diference = (((int) comicWidth) - ((int) actualWidth));
 
-        fprintf(stderr, "diff: %i ", diference);
 
         if (diference < 0) {
             cmp -= imageParLigne[k];

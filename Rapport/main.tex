@@ -8,7 +8,32 @@
 \section{Répartition des cases} %1
 %Ton boulot drewdrew <3
 \subsection{} %a
+Une approche exhaustive consisterait à calculer toutes les possibilités de répartition des images puis de chercher celui avec le coût minimal. \\
+
+\paragraph{Si il y a 1 image a répartir,} il n'y a qu'une possibilité.
+	\begin{itemize}
+		\item 1 image sur la première ligne
+	\end{itemize}
+\paragraph{Si il y a 2 images à répartir,} il y a deux cas possible.
+	\begin{itemize}
+		\item 2 images sur la première ligne
+		\item 1 image sur la première ligne et une sur la seconde.
+	\end{itemize}
+
+\paragraph{Si il y a 3 images à répartir,} il y a 4 possibilités.
+	\begin{itemize}
+		\item 3 images sur la première ligne
+		\item 2 images sur la première ligne et une sur la seconde
+		\item 1 images sur la première ligne et 2 sur la seconde
+		\item 1 image par ligne\\
+	\end{itemize}
+	
+À chaque ajout d'une image, on multiplie par deux le nombre de possibilités de répartitions. Dans une cas plus générale on peut dire que la complexité est de $2^n-1$ avec $n$ le nombre d'images à répartir.
+
 \subsection{} %b
+	\input{systeme}
+	où $C(i,j)$ est le coût pour mettre 	une image i et j sur la même ligne. 
+	
 \subsection{} %c
 \subsection{} %d
 \subsection{} %e

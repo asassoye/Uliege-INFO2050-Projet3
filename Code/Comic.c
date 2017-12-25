@@ -72,7 +72,7 @@ size_t *wrapImages(const PNMImage **images, size_t nbImages, size_t comicWidth, 
     }
 
     /*
-     * On rempli optimalCost
+     * On rempli mem
      */
     optimal(costMatrix, mem, 0, nbImages);
 
